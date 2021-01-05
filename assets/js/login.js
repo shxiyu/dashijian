@@ -1,3 +1,10 @@
+/*
+ * @Author: XiYu
+ * @Date: 2021-01-02 19:19:14
+ * @LastEditors: XiYu
+ * @LastEditTime: 2021-01-05 09:27:38
+ * @Description: ...
+ */
 $(function () {
     //点击"去注册账号"的链接
     $('#link_reg').on('click', function () {
@@ -53,7 +60,7 @@ $(function () {
         //阻止默认提交行为
         e.preventDefault();
         $.ajax({
-            method: 'POST',
+            type: 'POST',
             url: '/api/login',
             //快速获取表单中的数据
             data: $(this).serialize(),
@@ -66,7 +73,7 @@ $(function () {
                 //将登录成功得到的 token 字符串，保存到 localStorage 中
                 localStorage.setItem('token', res.token);
                 //跳转到后台主页
-                location.href ='./index.html'
+                location.href = './index.html'
             }
         })
     })

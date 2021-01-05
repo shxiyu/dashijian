@@ -2,12 +2,14 @@
  * @Author: XiYu
  * @Date: 2021-01-04 11:42:13
  * @LastEditors: XiYu
- * @LastEditTime: 2021-01-04 15:09:57
+ * @LastEditTime: 2021-01-05 20:34:18
  * @Description: ...
  */
 $(function () {
     let layer = layui.layer;
     let form = layui.form;
+
+    initArtCateList();
 
     //获取文章分类的列表
     function initArtCateList() {
@@ -15,7 +17,7 @@ $(function () {
             type: 'GET',
             url: '/my/article/cates',
             success: function (res) {
-                lethtmlStr = template('tpl-table', res);
+                let htmlStr = template('tpl-table', res);
                 $('tbody').html(htmlStr);
             }
         })
@@ -43,6 +45,7 @@ $(function () {
                 if (res.status !== 0) {
                     return layer.msg('新增分类失败');
                 }
+                initArtCateList();
                 layer.msg('新增分类成功');
                 //根据索引关闭弹出层
                 layer.close(indexAdd);
@@ -59,16 +62,16 @@ $(function () {
             title: '修改文章分类',
             content: $('#dialog-edit').html(),
         })
-    })
 
-    let id = $(this).attr('data-id');
-    //发起请求获取对应分类的数据
-    $.ajax({
-        type: 'GET',
-        url: '/my/article/cates' + id,
-        success: function (res) {
-            form.val('form-edit', res.data);
-        }
+        var id = $(this).attr('data-id')
+        // 发起请求获取对应分类的数据
+        $.ajax({
+            method: 'GET',
+            url: '/my/article/cates/' + id,
+            success: function (res) {
+                form.val('form-edit', res.data);
+            }
+        })
     })
 
     //
@@ -91,12 +94,21 @@ $(function () {
 
     //
     $('tbody').on('click', '.btn-delete', function () {
-        let id = $(this).attr('data-id');
-        //
-        layer.confirm('is not?', { icon: 3, title: '提示' }, function (index) {
-            //do something
-
-            layer.close(index);
-        });
+        var id = $(this).attr('data-id')
+        // 提示用户是否要删除
+        layer.confirm('确认删除?', { icon: 3, title: '提示' }, function (index) {
+            $.ajax({
+                method: 'GET',
+                url: '/my/article/deletecate/' + id,
+                success: function (res) {
+                    if (res.status !== 0) {
+                        return layer.msg('删除分类失败！')
+                    }
+                    layer.msg('删除分类成功！')
+                    layer.close(index)
+                    initArtCateList()
+                }
+            })
+        })
     })
 })
